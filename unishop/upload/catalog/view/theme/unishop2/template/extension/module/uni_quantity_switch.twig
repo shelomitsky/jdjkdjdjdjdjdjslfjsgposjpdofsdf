@@ -1,0 +1,9 @@
+{% if product.show_quantity and product.price_value %}
+	<div class="qty-switch">
+		<input type="text" name="quantity" value="{{ product.minimum }}" data-minimum="{{ product.minimum }}" data-maximum="{{ product.maximum }}" class="qty-switch__input form-control" />
+		<div>
+			<i class="qty-switch__btn fa fa-plus"></i>
+			<i class="qty-switch__btn fa fa-minus"></i>
+		</div>
+	</div>
+{% endif %}

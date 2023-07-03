@@ -1,0 +1,20 @@
+<?php
+$_['text_all_reviews'] = 'Read more...';
+$_['text_most_popular_review'] = 'Best review';
+$_['text_votes_send'] = 'Your review score has been accepted.';
+$_['text_votes_error'] = 'You have already rated this review';
+$_['text_votes_error_guest'] = 'Only for authorized customers';
+$_['text_reviews_1'] = 'review';
+$_['text_reviews_2'] = 'reviews';
+$_['text_reviews_3'] = 'reviews';
+$_['text_review_total'] = 'Reviews: %s';
+$_['text_review_score'] = 'Average score: %s';
+$_['text_admin_reply'] = 'The administration\'s response:';
+$_['text_review_plus'] = 'Advantages';
+$_['text_review_minus'] = 'Disadvantages';
+$_['text_review_comment'] = 'Comment';
+$_['entry_plus'] = 'Advantages:';
+$_['entry_minus'] = 'Disadvantages';
+$_['error_plus'] = 'The description of the advantages of the product can not be less than three letters';
+$_['error_minus'] = 'Description of product defects, can not be less than three letters';
+$_['add_new_review'] = 'Send your review';
