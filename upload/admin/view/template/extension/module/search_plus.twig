@@ -1,0 +1,437 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="hide-screen">
+        <div class="spinner-wrapper"><i class="fa fa-spinner fa-pulse fa-2x" aria-hidden="true"></i></div>
+    </div>
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button data-toggle="tooltip" title="{{ button_status_check }}" class="btn btn-primary" data-loading-text="<i class='fa fa-spinner fa-pulse'></i> {{ text_loading }}"><i class="fa fa-refresh"></i> {{button_status_check}} </button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+                <button onclick="saveSettings($(this))" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-success" data-loading-text="<i class='fa fa-spinner fa-pulse'></i> {{ text_loading }}"><i class="fa fa-floppy-o"></i></button>
+            </div>
+            <h1>
+                <i class="fa fa-search-plus"></i> {{ heading_title_main }}
+            </h1>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="message-wrapper">
+            {% if error.warning %}
+                <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error.warning }}
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+            {% endif %}
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="pull-right">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+                    <div class="col-xs-3">
+                        <ul class="nav nav-tabs tabs-left">
+                            <li class="active"><a href="#tab-general" data-toggle="tab"><i class="fa fa-home tab-icon"></i> {{ tab_server }}</a></li>
+                            <li><a href="#tab-advanced" data-toggle="tab"><i class="fa fa-expand tab-icon"></i> {{ tab_content }}</a></li>
+                            <li><a href="#tab-log" data-toggle="tab"><i class="fa fa-bars tab-icon"></i> {{ tab_log }}</a></li>
+                            <li><a href="#tab-manage" data-toggle="tab"><i class="fa fa-file-o tab-icon"></i> Manage Index</a></li>
+                            <li><a href="#tab-statistics" data-toggle="tab"><i class="fa fa-file-o tab-icon"></i> {{ tab_statistics }}</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-xs-9">
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab-general">
+                                <div class="col-sm12 alert alert-warning text-center">
+                                    <i class="fa fa-exclamation-circle"></i>&nbsp;{{ text_version_info | replace({'%es_v%': es_v}) }} 
+                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                </div>
+                                <fieldset>
+                                    <legend>{{ legend_general }}</legend>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+                                        <div class="col-sm-10">
+                                            <input type="hidden" name="module_search_plus_status" value="{{ module_search_plus_status }}"/>
+                                            {% if module_search_plus_status %}
+                                                <a onclick="changeStatus($(this));changeDisplay($('#general-group'));return true;" style="cursor: pointer;">
+                                                    <i class="fa fa-toggle-on fa-3x" style="color:#32CD32;" aria-hidden="true" data-toggle="tooltip" title="{{ text_enabled }}"></i>
+                                                </a>
+                                            {% else %}
+                                                <a onclick="changeStatus($(this));changeDisplay($('#general-group'));return false;" style="cursor: pointer;">
+                                                    <i class="fa fa-toggle-off fa-3x" style="color:#A9A9A9;" aria-hidden="true" data-toggle="tooltip" title="{{ text_disabled }}"></i>
+                                                </a>
+                                            {% endif %}
+                                            <span title="{{ entry_status }}" class="help">{{ help_status }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group required">
+                                        <label class="col-sm-2 control-label" for="input-url">{{ entry_url }}</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="module_search_plus_url" value="{{ module_search_plus_url }}" placeholder="{{ entry_url }}" id="input-url" class="form-control notranslate" />
+                                            <span title="{{ entry_url }}" class="help">{{ help_url }}</span>
+                                            <div class="error-wrapper error_url"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="input-authentication">{{ entry_authentication }}</label>
+                                        <div class="col-sm-10">
+                                            <select name="module_search_plus_authentication" id="input-authentication" class="form-control">
+                                                <option value="1" {{ (module_search_plus_authentication == "1") ? 'selected' : '' }}>{{ text_enabled }}</option>
+                                                <option value="0" {{ (module_search_plus_authentication == "0") ? 'selected' : '' }} >{{ text_disabled }}</option>
+                                            </select>
+                                            <span class="help" title="{{ entry_authentication }}">{{ help_authentication }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group authentication">
+                                        <label class="col-sm-2 control-label" for="input-username">{{ entry_username }}</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="module_search_plus_username" value="{{ module_search_plus_username }}" placeholder="Username" id="input-username" class="form-control notranslate" />
+                                            <span title="{{ entry_username }}" class="help">{{ help_username }}</span>
+                                            <div class="error-wrapper error_username"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group authentication">
+                                        <label class="col-sm-2 control-label" for="input-password">{{ entry_password }}</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="module_search_plus_password" value="{{ module_search_plus_password }}" placeholder="Password" id="input-password" class="form-control notranslate" />
+                                            <span title="{{ entry_password }}" class="help">{{ help_password }}</span>
+                                            <div class="error-wrapper error_password"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="check-connection">{{ entry_check_connection }}</label>
+                                        <div class="col-sm-10">
+                                            <a id="check-connection" class="btn btn-info"  onclick="checkConnection()"><i class="fa fa-refresh"></i></a>
+                                        </div>
+                                        <div class="col-sm-12" id="connection-status"></div>
+                                    </div>
+                                    <div class="form-group ">
+                                        <label class="col-sm-2 control-label" for="input-order-id">{{ entry_read_timeout }}</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="module_search_plus_read_timeout" value="{{ module_search_plus_read_timeout }}" placeholder="Number of seconds (minimum of 1)" id="input-order-id" class="form-control notranslate" />
+                                            <span title="{{ entry_read_timeout }}" class="help">{{ help_read_timeout }}</span>
+                                            <div class="error-wrapper error_order_id"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group ">
+                                        <label class="col-sm-2 control-label" for="input-order-id">{{ entry_write_timeout }}</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="module_search_plus_write_timeout" value="{{ module_search_plus_write_timeout }}" placeholder="Number of seconds (minimum of 1)" id="input-order-id" class="form-control notranslate" />
+                                            <span title="{{ entry_write_timeout }}" class="help">{{ help_write_timeout }}</span>
+                                            <div class="error-wrapper error_order_id"></div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="tab-pane opacity-group" id="tab-advanced">
+                                <fieldset>
+                                    <legend>{{ legend_advanced }}</legend>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="input-advanced_settings">{{ entry_attributes_settings }}</label>
+                                        <div class="col-sm-10">
+                                            <div class="well well-sm" style="height: 150px; overflow: auto;">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <button type="button" name="selectall" class="selAll btn btn-xs btn-success">Select all</button>
+                                                    </label>
+                                                    <label>
+                                                        <button type="button" name="unselectall" class="uselAll btn btn-xs btn-success">Unselect all</button>
+                                                    </label>
+                                                </div>
+                                                {% for field in attribute_name %}
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" name="module_search_plus_attribute_name[]" value="{{ field.id }}" {% if module_search_plus_attribute_name is defined and field.id in module_search_plus_attribute_name %}checked="checked" {% endif %}/>
+                                                            {{ field.name }}
+                                                        </label>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <fieldset>
+                                    <legend>{{legend_synonyms}}</legend>
+                                    <div class="alert alert-info"><p align="center"><i class="fa fa-exclamation-circle"></i> {{text_pro_version}}</p></div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="input-synonyms">{{ entry_synonyms }}</label>
+                                        <div class="col-sm-10">
+                                            <textarea name="module_search_plus_synonyms" id="input-synonyms" class="form-control" disabled rows="6"/>{{ module_search_plus_synonyms}}</textarea>
+                                            <div class="help">{{ synonyms_desc }}<a href="https://wiki.apache.org/solr/AnalyzersTokenizersTokenFilters#solr.SynonymFilterFactory" target="_blank"> here</a></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="input-stopwords">Stop Words</label>
+                                        <div class="col-sm-10">
+                                            <textarea name="module_search_plus_stopwords" id="input-stopwords" class="form-control" disabled rows="3"/>{{ module_search_plus_stopwords}}</textarea>
+                                            <div class="help">{{ stopwords_desc }}</div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="tab-pane opacity-group" id="tab-log">
+                                <fieldset>
+                                    <legend>{{ legend_log }}</legend>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="fuzzyness">{{ entry_log }}</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="module_search_plus_fuzziness" value="{{ module_search_plus_fuzziness }}" id="input-fuzzyness" class="form-control notranslate" />
+                                            <p class="help">{{ desc_fuzz }}</p>
+                                        </div>
+                                    </div>    
+                                </fieldset>
+                                <fieldset>
+                                    <legend>{{ legend_relevance }}</legend>
+                                    <p class="help">{{ desc_field }}</p>
+                                    {% for field in product_detail %}
+                                        {% set name ="module_search_plus_field_"~field %}
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label" for="input-order-status">{{ field|replace({'_' : ' '})|title }}</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" name="module_search_plus_field_{{ field }}" value="{{ attribute(_context, name) }}" id="input-index_name" class="form-control notranslate" />
+                                                    <span title="{{ field|replace({'_' : ' '})|title }}" class="help">{{ help_empty }}</span>
+                                                </div>
+                                            </div>
+                                    {% endfor %}
+                                </fieldset>
+                                <fieldset>
+                                    <legend>{{ legend_result_setting }}</legend>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="redirect">{{ entry_redirect }}</label>
+                                        <div class="col-sm-10">
+                                            <select name="module_search_plus_redirect" id="input-redirect" class="form-control">
+                                                <option value="1" {{ (module_search_plus_redirect == "1") ? 'selected' : '' }}>{{ text_enabled }}</option>
+                                                <option value="0" {{ (module_search_plus_redirect == "0") ? 'selected' : '' }} >{{ text_disabled }}</option>
+                                            </select>
+                                            <span class="help" title="{{ entry_redirect }}">{{ help_redirect }}</span>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="tab-pane opacity-group" id="tab-manage">
+                                <fieldset>
+                                    <legend>Manage Index</legend>
+                                    <div class="form-group required">
+                                        <label class="col-sm-2 control-label" for="input-order-status">{{ entry_index_name }}</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="module_search_plus_index" value="{{ module_search_plus_index }}" id="input-index_name" class="form-control notranslate" />
+                                            <span title="{{ entry_index_name }}" class="help">{{ help_index_name }}</span>
+                                            <div class="error-wrapper error_index"></div>
+                                        </div>
+                                    </div>
+                                    {# <div class="form-group required">
+                                        <label class="col-sm-2 control-label" for="input-debug">{{ entry_second_name }}</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="module_search_plus_second_index" value="{{ module_search_plus_second_index }}" id="input-second_index_name" class="form-control notranslate" />
+                                            <span title="{{ entry_second_name }}" class="help">{{ help_second_name }}</span>
+                                            <div class="error-wrapper error_second_name"></div>
+                                        </div>
+                                    </div> #}
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="input-bulk-count">{{ entry_bulk_count }}</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="module_search_plus_bulk_count" value="{{ module_search_plus_bulk_count }}" id="input-bulk-count" class="form-control notranslate" />
+                                            <span title="{{ entry_bulk_count }}" class="help">{{ help_bulk_count }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="fuzzyness">{{ reindex_title }}</label>
+                                        <div class="col-sm-6">
+                                            <a id="reindex" class="btn btn-warning" data-loading-text="<i class='fa fa-spinner fa-pulse'></i> {{ text_loading }}" onclick="reindex()"><i class="fa fa-refresh"></i></a>
+                                            <div id="index-result"></div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="tab-pane opacity-group" id="tab-statistics">
+                                <fieldset>
+                                    <legend>{{ legend_statistics }}</legend>
+                                </fieldset>
+                                <p class="text-center help" style="font-size: 13px">These settings are not available right now.</p>
+                            </div>
+                          </div>
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+    <script type="text/javascript"><!--
+
+    $('.selAll').click(function () {
+        $('input[name="module_search_plus_attribute_name[]"]').each(function () {
+            $(this).prop('checked', true);
+        });
+    });
+    $('.uselAll').click(function () {
+        $('input[name="module_search_plus_attribute_name[]"]').each(function () {
+            $(this).prop('checked', false);
+        });
+    });
+
+     // $('input[name="module_search_plus_attribute_name[]"]').each(function () {
+     //
+     //  });
+
+
+
+
+     function changeStatus(element) {
+        if (parseInt(element.parent().find("input").val())) {
+            element.parent().find("input").val(0);
+            element.children("i").removeClass("fa-toggle-on");
+            element.children("i").addClass("fa-toggle-off");
+            element.children("i").css("color", "#A9A9A9");
+            element.children("i").attr("data-original-title", "{{ text_disabled }}");
+        } else {
+            element.parent().find("input").val(1);
+            element.children("i").removeClass("fa-toggle-off");
+            element.children("i").addClass("fa-toggle-on");
+            element.children("i").css("color", "#32CD32");
+            element.children("i").attr("data-original-title", "{{ text_enabled }}");
+        }
+    }
+    function changeDisplay(element) {
+        element.fadeToggle();
+    }
+    function changeOpacity(element) {
+        element.toggleClass('show-opacity');
+    }
+    function saveSettings(e) {
+        $.ajax({
+            type: 'post',
+            url: '{{ action }}',
+            data: $('#form-module').serialize(),
+            dataType: 'json',
+            beforeSend: function() {
+                e.button('loading');
+                $('.hide-screen').show();
+            },
+            complete: function() {
+                e.button('reset');
+                $('.hide-screen').hide();
+            },
+            success: function(json) {
+                $('.message-wrapper').empty();
+                $('.error-wrapper').empty();
+                $('div').removeClass('text-danger');
+                $('.form-group').removeClass('has-error');
+                if (json.success) {
+                    $('.message-wrapper').html('<div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ text_success }}<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    if (json.info) {
+                        $('.message-wrapper').append('<div class="alert alert-warning"><i class="fa fa-info-circle"></i> ' + json.info + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    }
+                } else if (json.error) {
+                    $('.message-wrapper').html('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json.warning + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    $.each(json.error, function(key, error) {
+                        $('.' + key).text(error);
+                        $('.' + key).addClass('text-danger');
+                        $('.' + key).parent().parent('.form-group').addClass('has-error');
+                    });
+                }
+                $('.hide-screen').hide();
+                $(".alert").delay(6000).fadeOut();
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.log("Error: " + errorThrown + " Status: " + textStatus);
+                $('.hide-screen').hide();
+            }
+        });
+    }
+
+    function reindex() {
+        $.ajax({
+            type:'post',
+            url:'index.php?route=extension/module/search_plus/reindex&user_token={{ user_token}}',
+            dataType: "json",
+            beforeSend: function() {
+                $("#index-result").html('<div class="alert alert-info"><i class="fa fa-spinner fa-pulse "></i> Indexing Products...</div>');
+            },
+            complete: function() {
+                 $(".alert").delay(6000).fadeOut("slow");
+            },
+            success: function(json) {
+                if (json['status']) {
+                    $("#index-result").html('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['message'] + ' in '+ json['time'] +'<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                }
+                if (json['error']) {
+                    $("#index-result").html('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error']['message'] +'<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                }
+            }
+        });
+    }
+
+    function checkConnection() {
+        $.ajax({
+            type:'post',
+            url:'index.php?route=extension/module/search_plus/connectionStatus&user_token={{ user_token}}',
+            dataType: "json",
+            beforeSend: function() {
+                $("#connection-status").html('<div class="alert alert-info"><i class="fa fa-spinner fa-pulse "></i> Connecting...</div>');
+            },
+            complete: function() {
+               $(".alert").delay(6000).fadeOut("slow");
+           },
+           success: function(json) {
+            if (json['status']) {
+                $("#connection-status").html('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['message'] +  json['version']['number'] +'<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+            }
+            if (json['error']) {
+                $("#connection-status").html('<div class="alert alert-danger"><i class="fa fa-close"></i> {{text_connection_failed}}' + json['error']['message'] +'<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+            }
+          }
+        });
+    }
+
+    function loadIframe(id) {
+        var iframe = document.getElementById(id);
+        if (!iframe.src) {
+            iframe.src = $('#' + id).data('src');
+        }
+    }
+    //--></script>
+    <script type="text/javascript"><!--
+    $(document).ready(function() {
+        if ($('#input-authentication').find(":selected").val() == 0) {
+            $( ".authentication" ).hide();
+        }
+
+        $( "#input-authentication" ).change(function() {
+            if ($(this).find(":selected").val() == 1) {
+                $( ".authentication" ).slideDown( "slow");
+            }
+            else {
+                $( ".authentication" ).slideUp( "slow");
+            }
+
+      });
+        $("select[name='store_id']").change(function() {
+            if (confirm('{{ text_confirm }}')) {
+                if (window.location.search.indexOf('store_id=') > -1) {
+                    window.location.href = window.location.href.replace('store_id={{ store_id }}', 'store_id=' + $(this).val());
+                } else {
+                    window.location.href = '{{ action }}&store_id=' + $(this).val();
+                }
+            } else {
+                $(this).val('{{ store_id }}');
+            }
+        });
+    });
+    //--></script>
+    <script type="text/javascript"><!--
+    $('.nav-tabs a:first').tab('show');
+    //--></script>
+</div>
+{{ footer }}
